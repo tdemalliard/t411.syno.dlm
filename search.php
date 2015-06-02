@@ -4,23 +4,28 @@ class SynoDLMSearchT411 {
     private $qurl = "http://api.t411.io/torrents/search/"; // search url
     private $dlurl = "http://api.t411.io/torrents/download/"; // torrent download url
     private $purl = "http://www.t411.io/torrents/"; // torrent page url
+
+    // go throw all results
+    private $limit = 100;
+
+    // for auth
     private $uid = 0;
     private $token = 0;
+
     private $debug  = 1;
 
-
     public function __construct() {
-        file_put_contents('/tmp/t411_dlm.log', date('m/d/Y h:i:s a', time()));
     }
 
     private function DebugLog($str) {
         if ($this->debug==1) {
-            file_put_contents('/tmp/t411_dlm.log', $str . "\n************\n", FILE_APPEND);
+            // file_put_contents('/tmp/t411_dlm.log', "********" . date('m/d/Y h:i:s a', time()) . "\n" . $str . "\n", FILE_APPEND);
+            echo $str . "\n";
         }
     }
 
     private function auth($username, $password) {
-        DebugLog('auth:');
+        $this->DebugLog('auth:');
         // get auth variables
         $auth = 'username=' . $username . '&password=' . $password;
 
@@ -36,30 +41,39 @@ class SynoDLMSearchT411 {
 
         // now, process the JSON string
         $json = json_decode($body);
+        $this->DebugLog('    body:' . $body);
+
+        if ( isset($json->error) ) {
+            $this->DebugLog('    error: ' . $json->error);
+            return false;
+        }
+
         $this->token = $json->token;
         $this->uid = $json->uid;
 
-        DebugLog('    DONE');
+        $this->DebugLog('    token: ' . $this->token);
+        $this->DebugLog('    DONE');
+        return true;
     }
 
     public function VerifyAccount($username, $password) {
-        DebugLog('VerifyAccount:');
-        DebugLog("   username: $username");
-        DebugLog("   password: $password");
-        DebugLog('    DONE');
-        return true;
+        $this->DebugLog('VerifyAccount:');
+        $this->DebugLog("   username: $username");
+        $this->DebugLog("   password: $password");
+
+        $this->DebugLog('    DONE');
+        return $this->auth($username, $password);
     }
 
 
     public function prepare($curl, $query, $username, $password) { 
-        DebugLog('prepare:');
-        DebugLog("   username: $username");
-        DebugLog("   username: $username");
-        DebugLog("   query: $query");
+        $this->DebugLog('prepare:');
+        $this->DebugLog("   username: $username");
+        $this->DebugLog("   username: $username");
+        $this->DebugLog("   query: $query");
         
-        $url = $this->qurl . urlencode($query);
-
-        echo "search: $search\n\n";
+        $url = $this->qurl . urlencode($query) . '?offset=0&limit=' . $this->limit;
+        $this->DebugLog('    url: ' . $url);
 
         $this->auth($username, $password);
 
@@ -67,34 +81,60 @@ class SynoDLMSearchT411 {
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        DebugLog('    DONE');
+        $this->DebugLog('    DONE');
     }
 
     public function parse($plugin, $response) {
-        DebugLog('parse:');
-        DebugLog("   response: $response");
+        $this->DebugLog('parse:');
 
         $json = json_decode($response);
 
-        DebugLog("   response: $json->total");
+        $this->DebugLog("   count: $json->total");
 
-        foreach ($json->torrents as $value) {
-            $plugin->addResult(
-                $json->name, //title
-                $this->dlurl . $json->id, //download link
-                $json->size, //size
-                $json->added, //datetime, format 2010-12-30 13:20:10
-                $this->purl . $json->rewritename, //torrent page
-                '', //hash, can be empty
-                $json->seeders, // seeds
-                $json->leechers, // leechs
-                $json->categoryname // category
-                );
+        // parse the results
+        $this->addPlugin($plugin, $json);
+
+        // get the other pages of results
+        for ($i = $this->limit; $i < $json->total; $i += $this->limit) {
+            // new curl
+            $curl = curl_init();
+
+            // set curl options
+            $url = $this->qurl . $json->query . '?offset=' . $i . '&limit=' . $this->limit;
+            $this->DebugLog("   url: $url");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array ('Authorization: '. $this->token) );
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            // query
+            $jsonPage = json_decode(curl_exec($curl));
+            curl_close($curl);
+
+            // parse the results
+            $this->addPlugin($plugin, $jsonPage);
         }
 
-        DebugLog('    DONE');
+        $this->DebugLog('    DONE');
 
         return $json->total;
+    }
+
+    private function addPlugin($plugin, $json) {
+        // parse the results
+        foreach ($json->torrents as $value) {
+            // $this->DebugLog('    name: ' . $value->name);
+            $plugin->addResult(
+                $value->name, //title
+                $this->dlurl . $value->id, //download link
+                $value->size, //size
+                $value->added, //datetime, format 2010-12-30 13:20:10
+                $this->purl . $value->rewritename, //torrent page
+                $value->id, //hash, can be empty, must be unique or results are merged, its the unique key of the list
+                $value->seeders, // seeds
+                $value->leechers, // leechs
+                $value->categoryname // category
+                );
+        }
     }
 
 
