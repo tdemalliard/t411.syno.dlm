@@ -12,14 +12,13 @@ class SynoDLMSearchT411 {
     private $uid = 0;
     private $token = 0;
 
-    private $debug  = 1;
+    public $debug  = 0;
 
     public function __construct() {
     }
 
     private function DebugLog($str) {
         if ($this->debug==1) {
-            // file_put_contents('/tmp/t411_dlm.log', "********" . date('m/d/Y h:i:s a', time()) . "\n" . $str . "\n", FILE_APPEND);
             echo $str . "\n";
         }
     }
