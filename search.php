@@ -1,9 +1,9 @@
 <?php
 class SynoDLMSearchT411 {
-    private $aurl = "http://api.t411.io/auth"; //auth url
-    private $qurl = "http://api.t411.io/torrents/search/"; // search url
-    private $dlurl = "http://api.t411.io/torrents/download/"; // torrent download url
-    private $purl = "http://www.t411.io/torrents/"; // torrent page url
+    private $aurl = "https://api.t411.io/auth"; //auth url
+    private $qurl = "https://api.t411.io/torrents/search/"; // search url
+    private $dlurl = "https://127.0.0.1/t411.syno.php"; // torrent download url
+    private $purl = "https://www.t411.io/torrents/"; // torrent page url
 
     // go throw all results
     private $limit = 100;
@@ -124,7 +124,7 @@ class SynoDLMSearchT411 {
             // $this->DebugLog('    name: ' . $value->name);
             $plugin->addResult(
                 $value->name, //title
-                $this->dlurl . $value->id, //download link
+                $this->dlurl . '?torrentid=' . $value->id . '&token=' . $this->token, //download link
                 $value->size, //size
                 $value->added, //datetime, format 2010-12-30 13:20:10
                 $this->purl . $value->rewritename, //torrent page
@@ -135,28 +135,5 @@ class SynoDLMSearchT411 {
                 );
         }
     }
-
-
-// $title: string
-// The torrent title.
-// $download: string
-// URL of the torrent file.
-// $size: integer or float
-// The file size of the torrent.
-// $datetime: string
-// The added time of torrent file in search server with
-// format such as "2010-12-30 13:20:10"
-// $page: string
-// URL to the page referring this torrent. This page
-// usually contain torrent detailed information
-// $hash: string
-// The hash value of the torrent. The value could be
-// empty string.
-// $seeds: integer
-// The number of seeders of this torrent
-// $leechs: integer
-// The number of leechers of this torrent
-// $category: string
-// The category of this torrent returned by server
 }
 ?>
