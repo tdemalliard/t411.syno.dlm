@@ -1,6 +1,6 @@
 <?php
 // api download torrent url
-$url = 'https://api.t411.io/torrents/download/'. $_GET['torrentid'];
+$url = 'https://api.t411.in/torrents/download/'. $_GET['torrentid'];
 
 // curl for download
 $curl = curl_init();
