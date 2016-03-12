@@ -1,10 +1,10 @@
 {
 "name": "t411",
 "displayname": "t411",
-"description": "Search to t411.on.",
-"version": "1.1",
+"description": "Search on t411.ch.",
+"version": "1.2",
 "accountsupport": true,
-"site": "http://t411.in",
+"site": "http://t411.ch",
 "module": "search.php",
 "type": "search",
 "class": "SynoDLMSearchT411"

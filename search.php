@@ -1,9 +1,10 @@
 <?php
 class SynoDLMSearchT411 {
-    private $aurl = "https://api.t411.in/auth"; //auth url
-    private $qurl = "https://api.t411.in/torrents/search/"; // search url
+    private $ext = 'ch';
+    private $aurl = "https://api.t411.$ext/auth"; //auth url
+    private $qurl = "https://api.t411.$ext/torrents/search/"; // search url
     private $dlurl = "https://127.0.0.1/t411.syno.php"; // torrent download url
-    private $purl = "https://www.t411.in/torrents/"; // torrent page url
+    private $purl = "https://www.t411.$ext/torrents/"; // torrent page url
 
     // go throw all results
     private $limit = 100;
