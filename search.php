@@ -1,9 +1,9 @@
 <?php
 class SynoDLMSearchT411 {
-    private $aurl = "https://api.t411.ch/auth"; //auth url
-    private $qurl = "https://api.t411.ch/torrents/search/"; // search url
-    private $dlurl = "https://127.0.0.1/t411.syno.php"; // torrent download url
-    private $purl = "https://www.t411.ch/torrents/"; // torrent page url
+    private $aurl = 'https://api.t411.ch/auth'; //auth url
+    private $qurl = 'https://api.t411.ch/torrents/search/'; // search url
+    private $dlurl = 'https://127.0.0.1/t411.syno.php'; // torrent download url
+    private $purl = 'https://www.t411.ch/torrents/'; // torrent page url
 
     // go throw all results
     private $limit = 100;
@@ -57,8 +57,8 @@ class SynoDLMSearchT411 {
 
     public function VerifyAccount($username, $password) {
         $this->DebugLog('VerifyAccount:');
-        $this->DebugLog("   username: $username");
-        $this->DebugLog("   password: $password");
+        $this->DebugLog('   username: '.$username);
+        $this->DebugLog('   password: '.$password);
 
         $this->DebugLog('    DONE');
         return $this->auth($username, $password);
@@ -67,9 +67,9 @@ class SynoDLMSearchT411 {
 
     public function prepare($curl, $query, $username, $password) { 
         $this->DebugLog('prepare:');
-        $this->DebugLog("   username: $username");
-        $this->DebugLog("   username: $username");
-        $this->DebugLog("   query: $query");
+        $this->DebugLog('   username: '.$username);
+        $this->DebugLog('   username: '.$username);
+        $this->DebugLog('   query: '.$query);
         
         $url = $this->qurl . urlencode($query) . '?offset=0&limit=' . $this->limit;
         $this->DebugLog('    url: ' . $url);
@@ -88,7 +88,7 @@ class SynoDLMSearchT411 {
 
         $json = json_decode($response);
 
-        $this->DebugLog("   count: $json->total");
+        $this->DebugLog('   count: '.$json->total);
 
         // parse the results
         $this->addPlugin($plugin, $json);
@@ -100,7 +100,7 @@ class SynoDLMSearchT411 {
 
             // set curl options
             $url = $this->qurl . $json->query . '?offset=' . $i . '&limit=' . $this->limit;
-            $this->DebugLog("   url: $url");
+            $this->DebugLog('   url: '.$url);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array ('Authorization: '. $this->token) );
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
