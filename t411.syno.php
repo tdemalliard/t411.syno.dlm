@@ -1,6 +1,6 @@
 <?php
 // api download torrent url
-$ext = 'ch';
+$ext = 'li';
 $url = 'https://api.t411.' . $ext .'/torrents/download/'. $_GET['torrentid'];
 
 // curl for download
