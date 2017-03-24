@@ -1,9 +1,9 @@
 <?php
 class SynoDLMSearchT411 {
-    private $aurl = 'https://api.t411.li/auth'; //auth url
-    private $qurl = 'https://api.t411.li/torrents/search/'; // search url
+    private $aurl = 'https://api.t411.ai/auth'; //auth url
+    private $qurl = 'https://api.t411.ai/torrents/search/'; // search url
     private $dlurl = 'https://127.0.0.1/t411.syno.php'; // torrent download url
-    private $purl = 'https://www.t411.li/torrents/'; // torrent page url
+    private $purl = 'https://www.t411.ai/torrents/'; // torrent page url
 
     // go throw all results
     private $limit = 100;
