@@ -20,7 +20,7 @@ tar zcf t411.syno.dlm INFO search.php
 4. Add your t411.io login and password. The verify button is no use. I did not code the account verification.
 
 ### Copy the torrent download script into the webserver
-1. Active your NAS Web Station, using https.
+1. Active your NAS Web Station. Enable the PHP curl extension.
 2. Copy the file t411.syno.php to the root of your web folder.
 
 
